@@ -36,8 +36,10 @@ handle['/cgi-bin'] = handlers.start;
 handle['/cgi-bin/sleep'] = handlers.sleep;
 handle['/cgi-bin/wakeup'] = handlers.wakeup;
 handle['/cgi-bin/reboot'] = handlers.reboot;
+handle['/cgi-bin/status'] = handlers.status;
 handle['/cgi-bin/get_version'] = handlers.get_version;
 handle['/cgi-bin/get_free_space'] = handlers.get_free_space;
+handle['/cgi-bin/leds'] = handlers.leds;
 
 log.info('OpenKarotz Emulator');
 server.start(router.route, handle);

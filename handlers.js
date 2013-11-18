@@ -43,31 +43,37 @@ function start(res, req) {
 		'<h2>API</h2>'+
 		'<ul>'+
 		'<li><a target="results" href="/cgi-bin/sleep">sleep</a></li>'+
-		'<li><a target="results" href="/cgi-bin/wakeup?silent=0">wakeup</a></li>'+
+		'<li><a target="results" href="/cgi-bin/wakeup?silent=0">wakeup</a> (<a target="results" href="/cgi-bin/wakeup?silent=1">silent</a>)</li>'+
 		'<li><a target="results" href="/cgi-bin/reboot">reboot</a></li>'+
+		'<li><a target="results" href="/cgi-bin/status">status</a></li>'+
 		'<li><a target="results" href="/cgi-bin/get_version">get_version</a></li>'+
 		'<li><a target="results" href="/cgi-bin/get_free_space">get_free_space</a></li>'+
+		'<li><a target="results" href="/cgi-bin/leds">leds</a></li>'+
 		'</ul>'+
 	    '</body>'+
 	    '</html>';
 
-	res.writeHead(200, {'Content-Type' : 'text/html'})
-	res.write(body)
-	res.end()
-	log.trace('start: end')
+	res.writeHead(200, {'Content-Type' : 'text/html'});
+	res.write(body);
+	res.end();
+	log.trace('start: end');
 }
-exports.start = start
+exports.start = start;
 
 function sendResponse(res, data) {
 	log.trace('sendResponse: ' + data);
-	res.writeHead(200, {'Content-Type' : 'text/plain'})
-	res.write(data)
-	res.end()
+	res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*'});
+	res.write(data);
+	res.end();
 }
 
-function getParameter(req, param) {
+function getParameter(req, param, defaultValue) {
 	var qs = url.parse(req.url).query;
-	return querystring.parse(qs)[param];
+	var value = querystring.parse(qs)[param];
+	if (value === undefined) {
+		return defaultValue;
+	}
+	return value;
 }
 
 function sleep(res, req) {
@@ -78,7 +84,7 @@ function sleep(res, req) {
 	sendResponse(res, data1);
 	log.trace('sleep: end');
 }
-exports.sleep = sleep
+exports.sleep = sleep;
 
 function wakeup(res, req) {
 	log.trace('wakeup: begin');
@@ -87,7 +93,7 @@ function wakeup(res, req) {
 	sendResponse(res, data);
 	log.trace('wakeup: end');
 }
-exports.wakeup = wakeup
+exports.wakeup = wakeup;
 
 function reboot(res, req) {
 	log.trace('reboot: begin');
@@ -95,7 +101,15 @@ function reboot(res, req) {
 	sendResponse(res, data);
 	log.trace('reboot: end');
 }
-exports.reboot = reboot
+exports.reboot = reboot;
+
+function status(res, req) {
+	log.trace('status: begin');
+	var data = '{"version":"201","ears_disabled":"0","sleep":"0","sleep_time":"0","led_color":"0000FF","led_pulse":"1","tts_cache_size":"4","usb_free_space":"-1","karotz_free_space":"148.4M","eth_mac":"00:00:00:00:00:00","wlan_mac":"01:23:45:67:89:AB","nb_tags":"4","nb_moods":"305","nb_sounds":"14","nb_stories":"0","karotz_percent_used_space":"37","usb_percent_used_space":""}';
+	sendResponse(res, data);
+	log.trace('status: end');
+}
+exports.status = status;
 
 function get_version(res, req) {
 	log.trace('get_version: begin');
@@ -103,13 +117,32 @@ function get_version(res, req) {
 	sendResponse(res, data);
 	log.trace('get_version: end');
 }
-exports.get_version = get_version
+exports.get_version = get_version;
 
 function get_free_space(res, req) {
 	log.trace('get_free_space: begin');
-	var data = '{"karotz_percent_used_space":"45","usb_percent_used_space":"50"}';
+	var data = '{"karotz_percent_used_space":"37","usb_percent_used_space":"-1"}';
 	sendResponse(res, data);
 	log.trace('get_free_space: end');
 }
-exports.get_free_space = get_free_space
+exports.get_free_space = get_free_space;
+
+function leds(res, req) {
+	log.trace('leds: begin');
+	var color = getParameter(req, "color", "00FF00");
+	var secondary_color = getParameter(req, "secondary_color", "000000");
+	var pulse = getParameter(req, "pulse", "0");
+	var no_memory = getParameter(req, "no_memory", "0");
+	var speed = getParameter(req, "speed", "");
+
+	var data = '{"color":"' + color +
+		'","secondary_color":"' + secondary_color +
+		'","pulse":"' + pulse +
+		'","no_memory":"' + no_memory +
+		'","speed":"' + speed +
+		'","return":"0"}';
+	sendResponse(res, data);
+	log.trace('leds: end');
+}
+exports.leds = leds;
 
