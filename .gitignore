@@ -7,6 +7,11 @@ lib-cov
 *.pid
 *.gz
 
+/.settings
+/.buildpath
+/.project
+/.README.md.html
+
 pids
 logs
 results
