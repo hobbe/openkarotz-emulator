@@ -9,6 +9,7 @@ lib-cov
 
 /.settings
 /.buildpath
+/.jshintrc
 /.project
 /.README.md.html
 

@@ -137,14 +137,15 @@ function status(res, req) {
 	log.trace('status: begin');
 
 	var sleep = karotz.isSleeping() ? 1 : 0;
-	var sleepTime = karotz.getSleepTime();
+	var pulse = karotz.isLedsPulse() ? 1 : 0;
+	var earsDisabled = karotz.isEarsDisabled() ? 1 : 0;
 
-	var data = '{"version":"201",'
-		+ '"ears_disabled":"0",'
+	var data = '{"version":"' + karotz.getVersion() + '",'
+		+ '"ears_disabled":"' + earsDisabled + '",'
 		+ '"sleep":"' + sleep + '",'
-		+ '"sleep_time":"' + sleepTime + '",'
-		+ '"led_color":"0000FF",'
-		+ '"led_pulse":"1",'
+		+ '"sleep_time":"' + karotz.getSleepTime() + '",'
+		+ '"led_color":"' + karotz.getLedsColor() + '",'
+		+ '"led_pulse":"' + pulse + '",'
 		+ '"tts_cache_size":"4",'
 		+ '"usb_free_space":"-1",'
 		+ '"karotz_free_space":"148.4M",'
@@ -164,7 +165,7 @@ exports.status = status;
 
 function get_version(res, req) {
 	log.trace('get_version: begin');
-	var data = '{"version":"200","return":"0"}';
+	var data = '{"version":"' + karotz.getVersion() + '","return":"0"}';
 	sendResponse(res, data);
 	log.trace('get_version: end');
 }
@@ -192,13 +193,13 @@ function leds(res, req) {
 		var speed = getParameter(req, "speed", "");
 		// TODO: handle blink parameter?
 
-		// TODO: store this data in karotz
+		karotz.leds(color, color2, pulse, speed);
 
-		data = '{"color":"' + color + '",'
-			+ '"secondary_color":"' + color2 + '",'
-			+ '"pulse":"' + pulse + '",'
+		data = '{"color":"' + karotz.getLedsColor() + '",'
+			+ '"secondary_color":"' + karotz.getLedsColor2() + '",'
+			+ '"pulse":"' + karotz.isLedsPulse() + '",'
 			+ '"no_memory":"' + no_memory + '",'
-			+ '"speed":"' + speed + '",'
+			+ '"speed":"' + karotz.getLedsSpeed() + '",'
 			+ '"return":"0"}';
 	}
 
@@ -223,7 +224,7 @@ function ears(res, req) {
 		if (left === undefined || right === undefined) {
 			data = '{"return":"1","msg":"Missing mandatory parameters."}';
 		} else {
-			// TODO: store this data in karotz
+			karotz.ears(left, right);
 			data = '{"left":"' + left + '","right":"' + right + '","return":"0"}';
 		}
 	}
@@ -242,7 +243,7 @@ function ears_reset(res, req) {
 	} else if (karotz.isEarsDisabled()){
 		data = '{"return":"1","msg":"Unable to perform action, ears disabled."}';
 	} else {
-		// TODO: store this data in karotz
+		karotz.ears(0, 0);
 		data = '{"return":"0"}';
 	}
 
@@ -263,10 +264,9 @@ function ears_random(res, req) {
 		var left = Math.floor((Math.random() * 15) + 1);
 		var right = Math.floor((Math.random() * 15) + 1);
 
-		// TODO: store this data in karotz
+		karotz.ears(left, right);
 		data = '{"left":"' + left + '","right":"' + right + '","return":"0"}';
 	}
-
 
 	sendResponse(res, data);
 	log.trace('ears_random: end');

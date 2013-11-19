@@ -29,9 +29,21 @@
 
 var log = require('./log');
 
+var version = "200";
 var sleeping = true;
 var sleepTime = new Date().getTime();
 var earsDisabled = false;
+var earsLeft = 0;
+var earsRight = 0;
+var ledsColor1 = "00FF00";
+var ledsColor2 = "000000";
+var ledsPulse = false;
+var ledsSpeed = 700;
+
+
+exports.getVersion = function() {
+	return version;
+};
 
 exports.isSleeping = function() {
 	return sleeping;
@@ -44,6 +56,31 @@ exports.getSleepTime = function() {
 exports.isEarsDisabled = function() {
 	return earsDisabled;
 };
+
+exports.getEarsLeft = function() {
+	return earsLeft;
+};
+
+exports.getEarsRight = function() {
+	return earsRight;
+};
+
+exports.getLedsColor = function() {
+	return ledsColor1;
+};
+
+exports.getLedsColor2 = function() {
+	return ledsColor2;
+};
+
+exports.isLedsPulse = function() {
+	return ledsPulse;
+};
+
+exports.getLedsSpeed = function() {
+	return ledsSpeed;
+};
+
 
 function sleep() {
 	sleeping = true;
@@ -64,3 +101,17 @@ function reboot() {
 	return sleeping;
 };
 exports.reboot = reboot;
+
+function leds(color1, color2, pulse, speed) {
+	if (color1) ledsColor1 = color1;
+	if (color2) ledsColor2 = color2;
+	if (pulse) ledsPulse = pulse;
+	if (speed) ledsSpeed = speed;
+}
+exports.leds = leds;
+
+function ears(left, right) {
+	if (left) earsLeft = left;
+	if (right) earsRight = right;
+}
+exports.ears = ears;
