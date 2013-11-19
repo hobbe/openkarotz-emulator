@@ -29,20 +29,38 @@
 
 var log = require('./log');
 
-function route(pathname, handle, res, req) {
+var sleeping = true;
+var sleepTime = new Date().getTime();
+var earsDisabled = false;
 
-	log.trace('Route a request for ' + pathname);
+exports.isSleeping = function() {
+	return sleeping;
+};
 
-	if (typeof handle[pathname] === 'function') {
-		return handle[pathname](res, req);
-	} else {
-		log.failure('No request handler found for ' + pathname);
-		res.writeHead(404, {
-			'Content-Type' : 'text/plain'
-		});
-		res.write('404 Not Found');
-		res.end();
-	}
-}
+exports.getSleepTime = function() {
+	return sleepTime;
+};
 
-exports.route = route;
+exports.isEarsDisabled = function() {
+	return earsDisabled;
+};
+
+function sleep() {
+	sleeping = true;
+	sleepTime = new Date().getTime();
+	return sleeping;
+};
+exports.sleep = sleep;
+
+function wakeup() {
+	sleeping = false;
+	sleepTime = 0;
+	return sleeping;
+};
+exports.wakeup = wakeup;
+
+function reboot() {
+	wakeup();
+	return sleeping;
+};
+exports.reboot = reboot;

@@ -31,6 +31,7 @@ var url = require('url');
 var querystring = require('querystring');
 var fs = require('fs');
 
+var karotz = require('./karotz');
 var log = require('./log');
 
 /**
@@ -96,12 +97,15 @@ function getParameter(req, param, defaultValue) {
 function sleep(res, req) {
 	log.trace('sleep: begin');
 
-	// TODO: update sleep state
-	var data1 = '{"return":"0"}';
-	// var data2 = '{"return":"1","msg":"Unable to perform action, rabbit is
-	// already sleeping."}';
+	var data = '';
+	if (karotz.isSleeping()) {
+		data = '{"return":"1","msg":"Unable to perform action, rabbit is already sleeping."}';
+	} else {
+		karotz.sleep();
+		data = '{"return":"0"}';
+	}
 
-	sendResponse(res, data1);
+	sendResponse(res, data);
 	log.trace('sleep: end');
 }
 exports.sleep = sleep;
@@ -110,9 +114,9 @@ function wakeup(res, req) {
 	log.trace('wakeup: begin');
 	var silent = getParameter(req, "silent");
 
-	// TODO: update sleep state
-	var data = '{"return":"0","silent":"' + silent + '"}';
+	karotz.wakeup();
 
+	var data = '{"return":"0","silent":"' + silent + '"}';
 	sendResponse(res, data);
 	log.trace('wakeup: end');
 }
@@ -121,9 +125,9 @@ exports.wakeup = wakeup;
 function reboot(res, req) {
 	log.trace('reboot: begin');
 
-	// TODO: update sleep state
-	var data = '{"return":"0"}';
+	karotz.reboot();
 
+	var data = '{"return":"0"}';
 	sendResponse(res, data);
 	log.trace('reboot: end');
 }
@@ -132,8 +136,26 @@ exports.reboot = reboot;
 function status(res, req) {
 	log.trace('status: begin');
 
-	// TODO: check sleep state
-	var data = '{"version":"201","ears_disabled":"0","sleep":"0","sleep_time":"0","led_color":"0000FF","led_pulse":"1","tts_cache_size":"4","usb_free_space":"-1","karotz_free_space":"148.4M","eth_mac":"00:00:00:00:00:00","wlan_mac":"01:23:45:67:89:AB","nb_tags":"4","nb_moods":"305","nb_sounds":"14","nb_stories":"0","karotz_percent_used_space":"37","usb_percent_used_space":""}';
+	var sleep = karotz.isSleeping() ? 1 : 0;
+	var sleepTime = karotz.getSleepTime();
+
+	var data = '{"version":"201",'
+		+ '"ears_disabled":"0",'
+		+ '"sleep":"' + sleep + '",'
+		+ '"sleep_time":"' + sleepTime + '",'
+		+ '"led_color":"0000FF",'
+		+ '"led_pulse":"1",'
+		+ '"tts_cache_size":"4",'
+		+ '"usb_free_space":"-1",'
+		+ '"karotz_free_space":"148.4M",'
+		+ '"eth_mac":"00:00:00:00:00:00",'
+		+ '"wlan_mac":"01:23:45:67:89:AB",'
+		+ '"nb_tags":"4",'
+		+ '"nb_moods":"305",'
+		+ '"nb_sounds":"14",'
+		+ '"nb_stories":"0",'
+		+ '"karotz_percent_used_space":"37",'
+		+ '"usb_percent_used_space":""}';
 
 	sendResponse(res, data);
 	log.trace('status: end');
@@ -159,21 +181,28 @@ exports.get_free_space = get_free_space;
 function leds(res, req) {
 	log.trace('leds: begin');
 
-	// TODO: check sleep state
-	// var data2 = '{"return":"1","msg":"Unable to perform action, rabbit is
-	// sleeping."}';
+	var data = '';
+	if (karotz.isSleeping()) {
+		data = '{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}';
+	} else {
+		var color = getParameter(req, "color", "00FF00");
+		var color2 = getParameter(req, "color2", "000000");
+		var pulse = getParameter(req, "pulse", "0");
+		var no_memory = getParameter(req, "no_memory", "0");
+		var speed = getParameter(req, "speed", "");
+		// TODO: handle blink parameter?
 
-	var color = getParameter(req, "color", "00FF00");
-	var color2 = getParameter(req, "color2", "000000");
-	var pulse = getParameter(req, "pulse", "0");
-	var no_memory = getParameter(req, "no_memory", "0");
-	var speed = getParameter(req, "speed", "");
-	// TODO: handle blink parameter?
+		// TODO: store this data in karotz
 
-	var data1 = '{"color":"' + color + '","secondary_color":"' + color2
-	        + '","pulse":"' + pulse + '","no_memory":"' + no_memory
-	        + '","speed":"' + speed + '","return":"0"}';
-	sendResponse(res, data1);
+		data = '{"color":"' + color + '",'
+			+ '"secondary_color":"' + color2 + '",'
+			+ '"pulse":"' + pulse + '",'
+			+ '"no_memory":"' + no_memory + '",'
+			+ '"speed":"' + speed + '",'
+			+ '"return":"0"}';
+	}
+
+	sendResponse(res, data);
 	log.trace('leds: end');
 }
 exports.leds = leds;
@@ -181,18 +210,25 @@ exports.leds = leds;
 function ears(res, req) {
 	log.trace('ears: begin');
 
-	// TODO: check sleep state
-	// var data2 = '{"return":"1","msg":"Unable to perform action, rabbit is
-	// sleeping."}';
-	// var data3 = '{"return":"1","msg":"Unable to perform action, ears
-	// disabled."}';
+	var data = '';
+	if (karotz.isSleeping()) {
+		data = '{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}';
+	} else if (karotz.isEarsDisabled()){
+		data = '{"return":"1","msg":"Unable to perform action, ears disabled."}';
+	} else {
+		var left = getParameter(req, "left");
+		var right = getParameter(req, "right");
+		// var noreset = getParameter(req, "noreset", "0"); // Unused
 
-	var left = getParameter(req, "left", "0");
-	var right = getParameter(req, "right", "0");
-	// var noreset = getParameter(req, "noreset", "0"); // Unused
+		if (left === undefined || right === undefined) {
+			data = '{"return":"1","msg":"Missing mandatory parameters."}';
+		} else {
+			// TODO: store this data in karotz
+			data = '{"left":"' + left + '","right":"' + right + '","return":"0"}';
+		}
+	}
 
-	var data1 = '{"left":"' + left + '","right":"' + right + '","return":"0"}';
-	sendResponse(res, data1);
+	sendResponse(res, data);
 	log.trace('ears: end');
 }
 exports.ears = ears;
@@ -200,14 +236,17 @@ exports.ears = ears;
 function ears_reset(res, req) {
 	log.trace('ears_reset: begin');
 
-	// TODO: check sleep state
-	var data1 = '{"return":"0"}';
-	// var data2 = '{"return":"1","msg":"Unable to perform action, rabbit is
-	// sleeping."}';
-	// var data3 = '{"return":"1","msg":"Unable to perform action, ears
-	// disabled."}';
+	var data = '';
+	if (karotz.isSleeping()) {
+		data = '{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}';
+	} else if (karotz.isEarsDisabled()){
+		data = '{"return":"1","msg":"Unable to perform action, ears disabled."}';
+	} else {
+		// TODO: store this data in karotz
+		data = '{"return":"0"}';
+	}
 
-	sendResponse(res, data1);
+	sendResponse(res, data);
 	log.trace('ears_reset: end');
 }
 exports.ears_reset = ears_reset;
@@ -215,18 +254,21 @@ exports.ears_reset = ears_reset;
 function ears_random(res, req) {
 	log.trace('ears_random: begin');
 
-	// TODO: check sleep state
-	// var data2 = '{"return":"1","msg":"Unable to perform action, rabbit is
-	// sleeping."}';
-	// var data3 = '{"return":"1","msg":"Unable to perform action, ears
-	// disabled."}';
+	var data = '';
+	if (karotz.isSleeping()) {
+		data = '{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}';
+	} else if (karotz.isEarsDisabled()){
+		data = '{"return":"1","msg":"Unable to perform action, ears disabled."}';
+	} else {
+		var left = Math.floor((Math.random() * 15) + 1);
+		var right = Math.floor((Math.random() * 15) + 1);
 
-	var left = Math.floor((Math.random() * 15) + 1);
-	var right = Math.floor((Math.random() * 15) + 1);
+		// TODO: store this data in karotz
+		data = '{"left":"' + left + '","right":"' + right + '","return":"0"}';
+	}
 
-	var data1 = '{"left":"' + left + '","right":"' + right + '","return":"0"}';
 
-	sendResponse(res, data1);
+	sendResponse(res, data);
 	log.trace('ears_random: end');
 }
 exports.ears_random = ears_random;
@@ -234,23 +276,23 @@ exports.ears_random = ears_random;
 function sound(res, req) {
 	log.trace('sound: begin');
 
-	// TODO: check sleep state
-	var data = '{"return":"1"}';
-	// var data2 = '{"return":"1","msg":"Unable to perform action, rabbit is
-	// sleeping."}';
-
-	var id = getParameter(req, "id");
-	var url = getParameter(req, "url");
-
-	if (id && url) {
-		data = '{"return":"1","msg":"You cannot use ID and URL parameters at the same time."}';
-	} else if ((id === undefined) && (url === undefined)) {
-		data = '{"return":"1","msg":"No sound to play."}';
-	} else if (id) {
-		data = '{"return":"0"}';
-		// data = '{"return":"1","msg":"Unable to find sound : ' + id + '"}';
+	var data = '';
+	if (karotz.isSleeping()) {
+		data = '{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}';
 	} else {
-		data = '{"return":"0"}';
+		var id = getParameter(req, "id");
+		var url = getParameter(req, "url");
+
+		if (id && url) {
+			data = '{"return":"1","msg":"You cannot use ID and URL parameters at the same time."}';
+		} else if ((id === undefined) && (url === undefined)) {
+			data = '{"return":"1","msg":"No sound to play."}';
+		} else if (id) {
+			data = '{"return":"0"}';
+			// data = '{"return":"1","msg":"Unable to find sound : ' + id + '"}';
+		} else {
+			data = '{"return":"0"}';
+		}
 	}
 
 	sendResponse(res, data);
@@ -261,14 +303,16 @@ exports.sound = sound;
 function sound_control(res, req) {
 	log.trace('sound_control: begin');
 
-	// TODO: check sleep state
-	var data = '{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}';
-
-	var cmd = getParameter(req, "cmd");
-	if (cmd === undefined) {
-		data = '{"return":"1","msg":"No command specified."}';
+	var data = '';
+	if (karotz.isSleeping()) {
+		data = '{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}';
 	} else {
-		data = '{"return":"0","cmd":"' + cmd + '"}';
+		var cmd = getParameter(req, "cmd");
+		if (cmd === undefined) {
+			data = '{"return":"1","msg":"No command specified."}';
+		} else {
+			data = '{"return":"0","cmd":"' + cmd + '"}';
+		}
 	}
 
 	sendResponse(res, data);
@@ -279,19 +323,21 @@ exports.sound_control = sound_control;
 function tts(res, req) {
 	log.trace('tts: begin');
 
-	// TODO: check sleep state
-	var data = '{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}';
-
-	var text = getParameter(req, "text");
-	var voice = getParameter(req, "voice", "margaux");
-	// var speed = getParameter(req, "speed"); // Unused
-	var nocache = getParameter(req, "nocache", 0);
-	// var engine = getParameter(req, "engine"); // Unused
-
-	if (text === undefined) {
-		data = '{"return":"1","msg":"Missing mandatory parameter(s)."}';
+	var data = '';
+	if (karotz.isSleeping()) {
+		data = '{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}';
 	} else {
-		data = '{"played":"1","cache":"' + (nocache == 0 ? 1 : 0) + '","return":"0","voice":"' + voice + '"}';
+		var text = getParameter(req, "text");
+		var voice = getParameter(req, "voice", "margaux");
+		// var speed = getParameter(req, "speed"); // Unused
+		var nocache = getParameter(req, "nocache", 0);
+		// var engine = getParameter(req, "engine"); // Unused
+
+		if (text === undefined) {
+			data = '{"return":"1","msg":"Missing mandatory parameter(s)."}';
+		} else {
+			data = '{"played":"1","cache":"' + (nocache == 0 ? 1 : 0) + '","return":"0","voice":"' + voice + '"}';
+		}
 	}
 
 	sendResponse(res, data);
