@@ -25,6 +25,8 @@
  *
  */
 
+'use strict';
+
 var log = require('./log');
 
 function route(pathname, handle, res, req) {
@@ -41,4 +43,4 @@ function route(pathname, handle, res, req) {
 	}
 }
 
-exports.route = route
+exports.route = route;

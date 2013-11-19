@@ -25,6 +25,8 @@
  *
  */
 
+'use strict';
+
 function trace(message) {
 	console.log(new Date() + ' [trace] ' + message);
 }

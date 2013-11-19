@@ -25,7 +25,9 @@
  *
  */
 
-var http = require('http')
+'use strict';
+
+var http = require('http');
 var url = require('url');
 var log = require('./log');
 var port = 80;
@@ -36,12 +38,12 @@ function start(route, handle) {
 		var pathname = url.parse(req.url).pathname;
 
 		if (pathname !== '/favicon.ico') {
-			route(pathname, handle, res, req)
+			route(pathname, handle, res, req);
 		}
 	}
 
-	http.createServer(onRequest).listen(port)
-	log.info('Server has started on http://localhost:' + port)
+	http.createServer(onRequest).listen(port);
+	log.info('Server has started on http://localhost:' + port);
 }
 
-exports.start = start
+exports.start = start;

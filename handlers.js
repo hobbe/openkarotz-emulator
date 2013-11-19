@@ -25,44 +25,61 @@
  *
  */
 
+'use strict';
+
 var url = require('url');
 var querystring = require('querystring');
 var fs = require('fs');
+
 var log = require('./log');
 
-function start(res, req) {
-	log.trace('start: begin');
+/**
+ * Handler for home page.
+ * @param res - result
+ * @param req - request
+ */
+function homepage(res, req) {
+	log.trace('homepage: begin');
 
-	var body = '<html>'+
-	    '<head>'+
-	    '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />'+
-	    '<title>OpenKarotz Emulator</title>'+
-	    '</head>'+
-	    '<body>'+
-		'<h1>OpenKarotz Emulator</h1>'+
-		'<h2>API</h2>'+
-		'<ul>'+
-		'<li><a target="results" href="/cgi-bin/sleep">sleep</a></li>'+
-		'<li><a target="results" href="/cgi-bin/wakeup?silent=0">wakeup</a> (<a target="results" href="/cgi-bin/wakeup?silent=1">silent</a>)</li>'+
-		'<li><a target="results" href="/cgi-bin/reboot">reboot</a></li>'+
-		'<li><a target="results" href="/cgi-bin/status">status</a></li>'+
-		'<li><a target="results" href="/cgi-bin/get_version">get_version</a></li>'+
-		'<li><a target="results" href="/cgi-bin/get_free_space">get_free_space</a></li>'+
-		'<li><a target="results" href="/cgi-bin/leds">leds</a></li>'+
-		'</ul>'+
-	    '</body>'+
-	    '</html>';
+	var body = '<html>'
+	        + '<head>'
+	        + '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />'
+	        + '<title>OpenKarotz Emulator</title>'
+	        + '</head>'
+	        + '<body>'
+	        + '<h1>OpenKarotz Emulator</h1>'
+	        + '<h2>API</h2>'
+	        + '<ul>'
+	        + '<li><a target="results" href="/cgi-bin/sleep">sleep</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/wakeup?silent=0">wakeup</a>, <a target="results" href="/cgi-bin/wakeup?silent=1">wakeup(silent)</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/reboot">reboot</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/status">status</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/get_version">get_version</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/get_free_space">get_free_space</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/leds">leds</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/ears">ears</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/ears_reset">ears_reset</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/ears_random">ears_random</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/sound?id=bip">sound(id)</a>, <a target="results" href="/cgi-bin/sound?url=http://play/sound">sound(url)</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/sound_control?cmd=quit">sound_control(quit)</a>, <a target="results" href="/cgi-bin/sound_control?cmd=pause">sound_control(pause)</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/tts?text=Hello%20World">tts</a></li>'
+	        + '</ul>' + '</body>' + '</html>';
 
-	res.writeHead(200, {'Content-Type' : 'text/html'});
+	res.writeHead(200, {
+		'Content-Type' : 'text/html'
+	});
 	res.write(body);
 	res.end();
-	log.trace('start: end');
+	log.trace('homepage: end');
 }
-exports.start = start;
+exports.homepage = homepage;
 
 function sendResponse(res, data) {
 	log.trace('sendResponse: ' + data);
-	res.writeHead(200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*'});
+	res.writeHead(200, {
+	    'Content-Type' : 'text/plain',
+	    'Access-Control-Allow-Origin' : '*'
+	});
 	res.write(data);
 	res.end();
 }
@@ -78,9 +95,12 @@ function getParameter(req, param, defaultValue) {
 
 function sleep(res, req) {
 	log.trace('sleep: begin');
+
+	// TODO: update sleep state
 	var data1 = '{"return":"0"}';
-	var data2 = '{"return":"1","msg":"Unable to perform action, rabbit is already sleeping."}';
-	// TODO: maintain sleep state
+	// var data2 = '{"return":"1","msg":"Unable to perform action, rabbit is
+	// already sleeping."}';
+
 	sendResponse(res, data1);
 	log.trace('sleep: end');
 }
@@ -89,7 +109,10 @@ exports.sleep = sleep;
 function wakeup(res, req) {
 	log.trace('wakeup: begin');
 	var silent = getParameter(req, "silent");
+
+	// TODO: update sleep state
 	var data = '{"return":"0","silent":"' + silent + '"}';
+
 	sendResponse(res, data);
 	log.trace('wakeup: end');
 }
@@ -97,7 +120,10 @@ exports.wakeup = wakeup;
 
 function reboot(res, req) {
 	log.trace('reboot: begin');
+
+	// TODO: update sleep state
 	var data = '{"return":"0"}';
+
 	sendResponse(res, data);
 	log.trace('reboot: end');
 }
@@ -105,7 +131,10 @@ exports.reboot = reboot;
 
 function status(res, req) {
 	log.trace('status: begin');
+
+	// TODO: check sleep state
 	var data = '{"version":"201","ears_disabled":"0","sleep":"0","sleep_time":"0","led_color":"0000FF","led_pulse":"1","tts_cache_size":"4","usb_free_space":"-1","karotz_free_space":"148.4M","eth_mac":"00:00:00:00:00:00","wlan_mac":"01:23:45:67:89:AB","nb_tags":"4","nb_moods":"305","nb_sounds":"14","nb_stories":"0","karotz_percent_used_space":"37","usb_percent_used_space":""}';
+
 	sendResponse(res, data);
 	log.trace('status: end');
 }
@@ -129,20 +158,143 @@ exports.get_free_space = get_free_space;
 
 function leds(res, req) {
 	log.trace('leds: begin');
+
+	// TODO: check sleep state
+	// var data2 = '{"return":"1","msg":"Unable to perform action, rabbit is
+	// sleeping."}';
+
 	var color = getParameter(req, "color", "00FF00");
-	var secondary_color = getParameter(req, "secondary_color", "000000");
+	var color2 = getParameter(req, "color2", "000000");
 	var pulse = getParameter(req, "pulse", "0");
 	var no_memory = getParameter(req, "no_memory", "0");
 	var speed = getParameter(req, "speed", "");
+	// TODO: handle blink parameter?
 
-	var data = '{"color":"' + color +
-		'","secondary_color":"' + secondary_color +
-		'","pulse":"' + pulse +
-		'","no_memory":"' + no_memory +
-		'","speed":"' + speed +
-		'","return":"0"}';
-	sendResponse(res, data);
+	var data1 = '{"color":"' + color + '","secondary_color":"' + color2
+	        + '","pulse":"' + pulse + '","no_memory":"' + no_memory
+	        + '","speed":"' + speed + '","return":"0"}';
+	sendResponse(res, data1);
 	log.trace('leds: end');
 }
 exports.leds = leds;
 
+function ears(res, req) {
+	log.trace('ears: begin');
+
+	// TODO: check sleep state
+	// var data2 = '{"return":"1","msg":"Unable to perform action, rabbit is
+	// sleeping."}';
+	// var data3 = '{"return":"1","msg":"Unable to perform action, ears
+	// disabled."}';
+
+	var left = getParameter(req, "left", "0");
+	var right = getParameter(req, "right", "0");
+	// var noreset = getParameter(req, "noreset", "0"); // Unused
+
+	var data1 = '{"left":"' + left + '","right":"' + right + '","return":"0"}';
+	sendResponse(res, data1);
+	log.trace('ears: end');
+}
+exports.ears = ears;
+
+function ears_reset(res, req) {
+	log.trace('ears_reset: begin');
+
+	// TODO: check sleep state
+	var data1 = '{"return":"0"}';
+	// var data2 = '{"return":"1","msg":"Unable to perform action, rabbit is
+	// sleeping."}';
+	// var data3 = '{"return":"1","msg":"Unable to perform action, ears
+	// disabled."}';
+
+	sendResponse(res, data1);
+	log.trace('ears_reset: end');
+}
+exports.ears_reset = ears_reset;
+
+function ears_random(res, req) {
+	log.trace('ears_random: begin');
+
+	// TODO: check sleep state
+	// var data2 = '{"return":"1","msg":"Unable to perform action, rabbit is
+	// sleeping."}';
+	// var data3 = '{"return":"1","msg":"Unable to perform action, ears
+	// disabled."}';
+
+	var left = Math.floor((Math.random() * 15) + 1);
+	var right = Math.floor((Math.random() * 15) + 1);
+
+	var data1 = '{"left":"' + left + '","right":"' + right + '","return":"0"}';
+
+	sendResponse(res, data1);
+	log.trace('ears_random: end');
+}
+exports.ears_random = ears_random;
+
+function sound(res, req) {
+	log.trace('sound: begin');
+
+	// TODO: check sleep state
+	var data = '{"return":"1"}';
+	// var data2 = '{"return":"1","msg":"Unable to perform action, rabbit is
+	// sleeping."}';
+
+	var id = getParameter(req, "id");
+	var url = getParameter(req, "url");
+
+	if (id && url) {
+		data = '{"return":"1","msg":"You cannot use ID and URL parameters at the same time."}';
+	} else if ((id === undefined) && (url === undefined)) {
+		data = '{"return":"1","msg":"No sound to play."}';
+	} else if (id) {
+		data = '{"return":"0"}';
+		// data = '{"return":"1","msg":"Unable to find sound : ' + id + '"}';
+	} else {
+		data = '{"return":"0"}';
+	}
+
+	sendResponse(res, data);
+	log.trace('sound: end');
+}
+exports.sound = sound;
+
+function sound_control(res, req) {
+	log.trace('sound_control: begin');
+
+	// TODO: check sleep state
+	var data = '{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}';
+
+	var cmd = getParameter(req, "cmd");
+	if (cmd === undefined) {
+		data = '{"return":"1","msg":"No command specified."}';
+	} else {
+		data = '{"return":"0","cmd":"' + cmd + '"}';
+	}
+
+	sendResponse(res, data);
+	log.trace('sound_control: end');
+}
+exports.sound_control = sound_control;
+
+function tts(res, req) {
+	log.trace('tts: begin');
+
+	// TODO: check sleep state
+	var data = '{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}';
+
+	var text = getParameter(req, "text");
+	var voice = getParameter(req, "voice", "margaux");
+	// var speed = getParameter(req, "speed"); // Unused
+	var nocache = getParameter(req, "nocache", 0);
+	// var engine = getParameter(req, "engine"); // Unused
+
+	if (text === undefined) {
+		data = '{"return":"1","msg":"Missing mandatory parameter(s)."}';
+	} else {
+		data = '{"played":"1","cache":"' + (nocache == 0 ? 1 : 0) + '","return":"0","voice":"' + voice + '"}';
+	}
+
+	sendResponse(res, data);
+	log.trace('tts: end');
+}
+exports.tts = tts;

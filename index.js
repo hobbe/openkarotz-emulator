@@ -25,14 +25,16 @@
  *
  */
 
+'use strict';
+
 var log = require('./log');
 var server = require('./server');
 var router = require('./router');
-var handlers = require('./handlers')
+var handlers = require('./handlers');
 
-var handle = {}
-handle['/'] = handlers.start;
-handle['/cgi-bin'] = handlers.start;
+var handle = {};
+handle['/'] = handlers.homepage;
+handle['/cgi-bin'] = handlers.homepage;
 handle['/cgi-bin/sleep'] = handlers.sleep;
 handle['/cgi-bin/wakeup'] = handlers.wakeup;
 handle['/cgi-bin/reboot'] = handlers.reboot;
@@ -40,6 +42,12 @@ handle['/cgi-bin/status'] = handlers.status;
 handle['/cgi-bin/get_version'] = handlers.get_version;
 handle['/cgi-bin/get_free_space'] = handlers.get_free_space;
 handle['/cgi-bin/leds'] = handlers.leds;
+handle['/cgi-bin/ears'] = handlers.ears;
+handle['/cgi-bin/ears_reset'] = handlers.ears_reset;
+handle['/cgi-bin/ears_random'] = handlers.ears_random;
+handle['/cgi-bin/sound'] = handlers.sound;
+handle['/cgi-bin/sound_control'] = handlers.sound_control;
+handle['/cgi-bin/tts'] = handlers.tts;
 
 log.info('OpenKarotz Emulator');
 server.start(router.route, handle);
