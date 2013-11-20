@@ -8,24 +8,30 @@ Current version 0.1.0 is still in development but usable.
 
 OpenKarotz can be found [here](http://openkarotz.filippi.org/).
 
-The folowing APIs are currently available:
-- sleep
-- wakeup
-- reboot
-- status
-- leds
+The following APIs are currently available:
 - ears
-- ears_reset
 - ears_random
+- ears_reset
+- leds
+- reboot
+- sleep
+- snapshot
+- snapshot_get
+- snapshot_list
 - sound
 - sound_control
+- status
+- wakeup
+
 
 ### Usage ###
 
-Install [Node.js](http://nodejs.org/).
+1. Install [Node.js](http://nodejs.org/).
 
-Run emulator.bat or:
+2. Run `emulator.bat` or:
 
-```
-node index.js
-```
+		node index.js
+
+3. Open web browser on [http://localhost](http://localhost) to view available APIs.
+
+4. Call any of the APIs from your application, eg. [http://localhost/cgi-bin/status](http://localhost/cgi-bin/status)
