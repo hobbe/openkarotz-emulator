@@ -9,11 +9,18 @@ Current version 0.1.0 is still in development but usable.
 OpenKarotz can be found [here](http://openkarotz.filippi.org/).
 
 The following APIs are currently available:
+- clear_cache
+- clear_snapshots
 - ears
+- ears_mode
 - ears_random
 - ears_reset
+- get_free_space
+- get_version
 - leds
+- radios_list
 - reboot
+- reset_install_flag
 - sleep
 - snapshot
 - snapshot_ftp (no FTP upload)
@@ -23,6 +30,7 @@ The following APIs are currently available:
 - sound_control
 - sound_list
 - status
+- tts
 - voice_list
 - wakeup
 

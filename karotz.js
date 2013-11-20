@@ -115,3 +115,13 @@ function ears(left, right) {
 	if (right) earsRight = right;
 }
 exports.ears = ears;
+
+function enableEars() {
+	earsDisabled = false;
+}
+exports.enableEars = enableEars;
+
+function disableEars() {
+	earsDisabled = true;
+}
+exports.disableEars = disableEars;

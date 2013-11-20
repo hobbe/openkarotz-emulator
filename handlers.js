@@ -49,28 +49,54 @@ function homepage(res, req) {
 	        + '</head>'
 	        + '<body>'
 	        + '<h1>OpenKarotz Emulator</h1>'
-	        + '<h2>API</h2>'
+	        + '<h2>Status</h2>'
 	        + '<ul>'
-	        + '<li><a target="results" href="/cgi-bin/sleep">sleep</a></li>'
-	        + '<li><a target="results" href="/cgi-bin/wakeup?silent=0">wakeup</a>, <a target="results" href="/cgi-bin/wakeup?silent=1">wakeup(silent)</a></li>'
-	        + '<li><a target="results" href="/cgi-bin/reboot">reboot</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/status">status</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/get_version">get_version</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/get_free_space">get_free_space</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/sleep">sleep</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/wakeup?silent=0">wakeup</a>, <a target="results" href="/cgi-bin/wakeup?silent=1">wakeup(silent)</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/reboot">reboot</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/reset_install_flag">reset_install_flag</a></li>'
+	        + '</ul>'
+	        + '<h2>Leds</h2>'
+	        + '<ul>'
 	        + '<li><a target="results" href="/cgi-bin/leds">leds</a></li>'
+	        + '</ul>'
+	        + '<h2>Ears</h2>'
+	        + '<ul>'
 	        + '<li><a target="results" href="/cgi-bin/ears">ears</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/ears_reset">ears_reset</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/ears_random">ears_random</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/ears_mode?disable=0">ears_mode(enabled)</a>, <a target="results" href="/cgi-bin/ears_mode?disable=1">ears_mode(disabled)</a></li>'
+	        + '</ul>'
+	        + '<h2>Sound</h2>'
+	        + '<ul>'
+	        + '<li><a target="results" href="/cgi-bin/sound_list">sound_list</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/radios_list">radios_list</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/sound?id=bip">sound(id)</a>, <a target="results" href="/cgi-bin/sound?url=http://play/sound">sound(url)</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/sound_control?cmd=quit">sound_control(quit)</a>, <a target="results" href="/cgi-bin/sound_control?cmd=pause">sound_control(pause)</a></li>'
-	        + '<li><a target="results" href="/cgi-bin/sound_list">sound_list</a></li>'
+	        + '</ul>'
+	        + '<h2>Speech</h2>'
+	        + '<ul>'
+	        + '<li><a target="results" href="/cgi-bin/voice_list">voice_list</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/tts?text=Hello%20World">tts</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/clear_cache">clear_cache</a></li>'
+	        + '</ul>'
+	        + '<h2>Photos</h2>'
+	        + '<ul>'
 	        + '<li><a target="results" href="/cgi-bin/snapshot">snapshot</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/snapshot_ftp">snapshot_ftp</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/snapshot_list">snapshot_list</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/snapshot_get">snapshot_get</a>, <a target="results" href="/cgi-bin/snapshot_get?filename=snapshot.thumb.gif">snapshot_get(thumbnail)</a></li>'
-	        + '<li><a target="results" href="/cgi-bin/voice_list">voice_list</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/clear_snapshots">clear_snapshots</a></li>'
 	        + '</ul>'
+	        + '<hr/>'
+	        + '<p><small>'
+	        + '<a href="https://github.com/hobbe">Copyright &copy 2013</a> - '
+	        + '<a href="https://github.com/hobbe/openkarotz-emulator">OpenKarotz Emulator</a> - '
+	        + '<a href="https://github.com/hobbe/openkarotz-emulator/raw/master/LICENSE">MIT License</a>'
+	        + '</small></p>'
 	        + '</body>'
 	        + '</html>';
 
@@ -248,6 +274,24 @@ function ears(res, req) {
 	log.trace('ears: end');
 }
 exports.ears = ears;
+
+function ears_mode(res, req) {
+	log.trace('ears_mode: begin');
+
+	var mode = getParameter(req, "disable", 0);
+	mode = (mode == 0 ? 0 : 1);
+	if (mode == 1) {
+		karotz.disableEars();
+	} else {
+		karotz.enableEars();
+	}
+
+	var data = '{"return":"0","disabled":"' + mode + '"}';
+
+	sendResponse(res, data);
+	log.trace('ears_mode: end');
+}
+exports.ears_mode = ears_mode;
 
 function ears_reset(res, req) {
 	log.trace('ears_reset: begin');
@@ -461,20 +505,68 @@ exports.snapshot_get = snapshot_get;
 function voice_list(res, req) {
 	log.trace('voice_list: begin');
 
-	var data = '{ "voices": ['
-		+ '{ "id":"alice","lang":"fr"},'
-		+ '{ "id":"claire","lang":"fr"},'
-		+ '{ "id":"julie","lang":"fr"},'
-		+ '{ "id":"justine","lang":"fr"},'
-		+ '{ "id":"margaux","lang":"fr"},'
-		+ '{ "id":"louise","lang":"fr"},'
-		+ '{ "id":"antoine","lang":"fr"},'
-		+ '{ "id":"bruno","lang":"fr"},'
-		+ '{ "id":"heather","lang":"us"},'
-		+ '{ "id":"ryan","lang":"us"}'
-		+ '], "return":"0" }';
+	var data = '{"voices":['
+		+ '{"id":"alice","lang":"fr"},'
+		+ '{"id":"claire","lang":"fr"},'
+		+ '{"id":"julie","lang":"fr"},'
+		+ '{"id":"justine","lang":"fr"},'
+		+ '{"id":"margaux","lang":"fr"},'
+		+ '{"id":"louise","lang":"fr"},'
+		+ '{"id":"antoine","lang":"fr"},'
+		+ '{"id":"bruno","lang":"fr"},'
+		+ '{"id":"heather","lang":"us"},'
+		+ '{"id":"ryan","lang":"us"}'
+		+ '],"return":"0"}';
 
 	sendResponse(res, data);
 	log.trace('voice_list: end');
 }
 exports.voice_list = voice_list;
+
+function radios_list(res, req) {
+	log.trace('radios_list: begin');
+
+	// Only a few ones...
+	var data = '{"streams":['
+		+ '{"id":1,"name":"Rire & Chanson","url":"http://mp3.live.tv-radio.com/rire_et_chansons/all/rir_124629.mp3"},'
+		+ '{"id":2,"name":"RTL","url":"http://streaming.radio.rtl.fr/rtl-1-44-96"},'
+		+ '{"id":3,"name":"RMC","url":"http://vipicecast.yacast.net/rmc"},'
+		+ '{"id":4,"name":"Europe 1","url":"http://vipicecast.yacast.net/europe1"},'
+		+ '{"id":5,"name":"RTL2","url":"http://streaming.radio.rtl2.fr/rtl2-1-44-96"}'
+		+ '],"return":"0"}';
+
+	sendResponse(res, data);
+	log.trace('radios_list: end');
+}
+exports.radios_list = radios_list;
+
+function reset_install_flag(res, req) {
+	log.trace('reset_install_flag: begin');
+
+	var data = '{"return":"0"}';
+
+	sendResponse(res, data);
+	log.trace('reset_install_flag: end');
+}
+exports.reset_install_flag = reset_install_flag;
+
+function clear_cache(res, req) {
+	log.trace('clear_cache: begin');
+
+	var data = '{"return":"0"}';
+
+	sendResponse(res, data);
+	log.trace('clear_cache: end');
+}
+exports.clear_cache = clear_cache;
+
+function clear_snapshots(res, req) {
+	log.trace('clear_snapshots: begin');
+
+	var data = '{"return":"0"}';
+
+	sendResponse(res, data);
+	log.trace('clear_snapshots: end');
+}
+exports.clear_snapshots = clear_snapshots;
+
