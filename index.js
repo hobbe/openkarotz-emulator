@@ -44,6 +44,7 @@ handle['/cgi-bin/leds'] = handlers.leds;
 handle['/cgi-bin/reboot'] = handlers.reboot;
 handle['/cgi-bin/sleep'] = handlers.sleep;
 handle['/cgi-bin/snapshot'] = handlers.snapshot;
+handle['/cgi-bin/snapshot_ftp'] = handlers.snapshot_ftp;
 handle['/cgi-bin/snapshot_get'] = handlers.snapshot_get;
 handle['/cgi-bin/snapshot_list'] = handlers.snapshot_list;
 handle['/cgi-bin/sound'] = handlers.sound;

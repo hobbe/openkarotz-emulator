@@ -66,6 +66,7 @@ function homepage(res, req) {
 	        + '<li><a target="results" href="/cgi-bin/sound_list">sound_list</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/tts?text=Hello%20World">tts</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/snapshot">snapshot</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/snapshot_ftp">snapshot_ftp</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/snapshot_list">snapshot_list</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/snapshot_get">snapshot_get</a>, <a target="results" href="/cgi-bin/snapshot_get?filename=snapshot.thumb.gif">snapshot_get(thumbnail)</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/voice_list">voice_list</a></li>'
@@ -387,16 +388,29 @@ exports.tts = tts;
 function snapshot(res, req) {
 	log.trace('snapshot: begin');
 
-	var data = '';
-
 	// var silent = getParameter(req, "silent", 1); // Unused
 	var filename = 'snapshot_2013_11_10_09_00_00';
-	data = '{"filename":"' + filename + '.jpg","thumb":"' + filename + '.thumb.gif","return":"0"}';
+
+	var data = '{"filename":"' + filename + '.jpg","thumb":"' + filename + '.thumb.gif","return":"0"}';
 
 	sendResponse(res, data);
 	log.trace('snapshot: end');
 }
 exports.snapshot = snapshot;
+
+function snapshot_ftp(res, req) {
+	// FTP upload is not done!
+	// IDEA: Java applet could be used to do the FTP upload
+	log.trace('snapshot_ftp: begin');
+
+	var filename = 'snapshot_2013_11_10_09_00_00';
+
+	var data = '{"filename":"' + filename + '.jpg","return":"0"}';
+
+	sendResponse(res, data);
+	log.trace('snapshot_ftp: end');
+}
+exports.snapshot_ftp = snapshot_ftp;
 
 function snapshot_list(res, req) {
 	log.trace('snapshot_list: begin');

@@ -16,6 +16,7 @@ The following APIs are currently available:
 - reboot
 - sleep
 - snapshot
+- snapshot_ftp (no FTP upload)
 - snapshot_get
 - snapshot_list
 - sound
