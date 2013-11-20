@@ -20,7 +20,9 @@ The following APIs are currently available:
 - snapshot_list
 - sound
 - sound_control
+- sound_list
 - status
+- voice_list
 - wakeup
 
 

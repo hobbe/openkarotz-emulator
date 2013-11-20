@@ -48,6 +48,7 @@ handle['/cgi-bin/snapshot_get'] = handlers.snapshot_get;
 handle['/cgi-bin/snapshot_list'] = handlers.snapshot_list;
 handle['/cgi-bin/sound'] = handlers.sound;
 handle['/cgi-bin/sound_control'] = handlers.sound_control;
+handle['/cgi-bin/sound_list'] = handlers.sound_list;
 handle['/cgi-bin/status'] = handlers.status;
 handle['/cgi-bin/tts'] = handlers.tts;
 handle['/cgi-bin/voice_list'] = handlers.voice_list;

@@ -63,6 +63,7 @@ function homepage(res, req) {
 	        + '<li><a target="results" href="/cgi-bin/ears_random">ears_random</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/sound?id=bip">sound(id)</a>, <a target="results" href="/cgi-bin/sound?url=http://play/sound">sound(url)</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/sound_control?cmd=quit">sound_control(quit)</a>, <a target="results" href="/cgi-bin/sound_control?cmd=pause">sound_control(pause)</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/sound_list">sound_list</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/tts?text=Hello%20World">tts</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/snapshot">snapshot</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/snapshot_list">snapshot_list</a></li>'
@@ -332,6 +333,31 @@ function sound_control(res, req) {
 	log.trace('sound_control: end');
 }
 exports.sound_control = sound_control;
+
+function sound_list(res, req) {
+	log.trace('sound_list: begin');
+
+	var data = '{"sounds": ['
+		+ '{"id":"bip1"},'
+		+ '{"id":"bling"},'
+		+ '{"id":"flush"},'
+		+ '{"id":"install_ok"},'
+		+ '{"id":"jet1"},'
+		+ '{"id":"laser_15"},'
+		+ '{"id":"merde"},'
+		+ '{"id":"ready"},'
+		+ '{"id":"rfid_error"},'
+		+ '{"id":"rfid_ok"},'
+		+ '{"id":"saut1"},'
+		+ '{"id":"start"},'
+		+ '{"id":"twang_01"},'
+		+ '{"id":"twang_04"}'
+		+ '],"return":"0"}';
+
+	sendResponse(res, data);
+	log.trace('sound_list: end');
+}
+exports.sound_list = sound_list;
 
 function tts(res, req) {
 	log.trace('tts: begin');
