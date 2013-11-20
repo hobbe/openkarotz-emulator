@@ -67,7 +67,10 @@ function homepage(res, req) {
 	        + '<li><a target="results" href="/cgi-bin/snapshot">snapshot</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/snapshot_list">snapshot_list</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/snapshot_get">snapshot_get</a>, <a target="results" href="/cgi-bin/snapshot_get?filename=snapshot.thumb.gif">snapshot_get(thumbnail)</a></li>'
-	        + '</ul>' + '</body>' + '</html>';
+	        + '<li><a target="results" href="/cgi-bin/voice_list">voice_list</a></li>'
+	        + '</ul>'
+	        + '</body>'
+	        + '</html>';
 
 	res.writeHead(200, {
 	    'Server': 'OpenKarotz Emulator WebServer 1.0',
@@ -415,3 +418,23 @@ function snapshot_get(res, req) {
 }
 exports.snapshot_get = snapshot_get;
 
+function voice_list(res, req) {
+	log.trace('voice_list: begin');
+
+	var data = '{ "voices": ['
+		+ '{ "id":"alice","lang":"fr"},'
+		+ '{ "id":"claire","lang":"fr"},'
+		+ '{ "id":"julie","lang":"fr"},'
+		+ '{ "id":"justine","lang":"fr"},'
+		+ '{ "id":"margaux","lang":"fr"},'
+		+ '{ "id":"louise","lang":"fr"},'
+		+ '{ "id":"antoine","lang":"fr"},'
+		+ '{ "id":"bruno","lang":"fr"},'
+		+ '{ "id":"heather","lang":"us"},'
+		+ '{ "id":"ryan","lang":"us"}'
+		+ '], "return":"0" }';
+
+	sendResponse(res, data);
+	log.trace('voice_list: end');
+}
+exports.voice_list = voice_list;
