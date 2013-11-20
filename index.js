@@ -48,6 +48,9 @@ handle['/cgi-bin/ears_random'] = handlers.ears_random;
 handle['/cgi-bin/sound'] = handlers.sound;
 handle['/cgi-bin/sound_control'] = handlers.sound_control;
 handle['/cgi-bin/tts'] = handlers.tts;
+handle['/cgi-bin/snapshot'] = handlers.snapshot;
+handle['/cgi-bin/snapshot_list'] = handlers.snapshot_list;
+handle['/cgi-bin/snapshot_get'] = handlers.snapshot_get;
 
 log.info('OpenKarotz Emulator');
 server.start(router.route, handle);

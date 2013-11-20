@@ -64,10 +64,17 @@ function homepage(res, req) {
 	        + '<li><a target="results" href="/cgi-bin/sound?id=bip">sound(id)</a>, <a target="results" href="/cgi-bin/sound?url=http://play/sound">sound(url)</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/sound_control?cmd=quit">sound_control(quit)</a>, <a target="results" href="/cgi-bin/sound_control?cmd=pause">sound_control(pause)</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/tts?text=Hello%20World">tts</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/snapshot">snapshot</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/snapshot_list">snapshot_list</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/snapshot_get">snapshot_get</a>, <a target="results" href="/cgi-bin/snapshot_get?filename=snapshot.thumb.gif">snapshot_get(thumbnail)</a></li>'
 	        + '</ul>' + '</body>' + '</html>';
 
 	res.writeHead(200, {
-		'Content-Type' : 'text/html'
+	    'Server': 'OpenKarotz Emulator WebServer 1.0',
+	    'Connection': 'close',
+	    'Accept-Ranges': 'bytes',
+	    'Content-Type' : 'text/html',
+	    'Access-Control-Allow-Origin': '*'
 	});
 	res.write(body);
 	res.end();
@@ -78,8 +85,11 @@ exports.homepage = homepage;
 function sendResponse(res, data) {
 	log.trace('sendResponse: ' + data);
 	res.writeHead(200, {
-	    'Content-Type' : 'text/plain',
-	    'Access-Control-Allow-Origin' : '*'
+	    'Server': 'OpenKarotz WebServer 1.0',
+	    'Connection': 'close',
+	    'Accept-Ranges': 'bytes',
+	    'Content-type': 'text/plain',
+	    'Access-Control-Allow-Origin': '*'
 	});
 	res.write(data);
 	res.end();
@@ -344,3 +354,64 @@ function tts(res, req) {
 	log.trace('tts: end');
 }
 exports.tts = tts;
+
+function snapshot(res, req) {
+	log.trace('snapshot: begin');
+
+	var data = '';
+
+	// var silent = getParameter(req, "silent", 1); // Unused
+	var filename = 'snapshot_2013_11_10_09_00_00';
+	data = '{"filename":"' + filename + '.jpg","thumb":"' + filename + '.thumb.gif","return":"0"}';
+
+	sendResponse(res, data);
+	log.trace('snapshot: end');
+}
+exports.snapshot = snapshot;
+
+function snapshot_list(res, req) {
+	log.trace('snapshot_list: begin');
+
+	var data = '{"snapshots":['
+		+ '{"id":"snapshot_2013_11_10_09_00_00"},'
+		+ '{"id":"snapshot_2013_11_10_09_01_00"},'
+		+ '{"id":"snapshot_2013_11_10_09_02_00"},'
+		+ '{"id":"snapshot_2013_11_10_09_03_00"}'
+		+ '],"return":"0"}';
+
+	sendResponse(res, data);
+	log.trace('snapshot_list: end');
+}
+exports.snapshot_list = snapshot_list;
+
+function snapshot_get(res, req) {
+	log.trace('snapshot_get: begin');
+
+	var filename = getParameter(req, 'filename');
+	var gif = (filename && filename.indexOf('.gif') > 0);
+	var imageFile = gif ? 'img/snapshot.thumb.gif' : 'img/snapshot.jpg';
+
+	fs.readFile(imageFile, 'binary', function(err, file) {
+		if (err) {
+			var data = '{"return":"1","msg":"' + err + '"}';
+			sendResponse(res, data);
+		} else {
+			res.writeHead(200, {
+				'Server': 'OpenKarotz WebServer 1.0',
+				'Connection': 'close',
+				'Accept-Ranges': 'bytes',
+				// 'Content-Disposition' : 'attachment; filename=' + filename,
+				'Cache-Control': 'private',
+				'Pragma': 'private',
+				'Content-type': (gif ? 'image/gif' : 'image/jpeg'),
+				'Access-Control-Allow-Origin': '*'
+			});
+			res.write(file, 'binary');
+			res.end();
+		}
+	});
+
+	log.trace('snapshot_get: end');
+}
+exports.snapshot_get = snapshot_get;
+
