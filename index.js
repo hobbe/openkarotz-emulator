@@ -36,6 +36,7 @@ var handle = {};
 handle['/'] = handlers.homepage;
 handle['/cgi-bin'] = handlers.homepage;
 
+// API
 handle['/cgi-bin/clear_cache'] = handlers.clear_cache;
 handle['/cgi-bin/clear_snapshots'] = handlers.clear_snapshots;
 handle['/cgi-bin/ears'] = handlers.ears;
@@ -60,6 +61,10 @@ handle['/cgi-bin/status'] = handlers.status;
 handle['/cgi-bin/tts'] = handlers.tts;
 handle['/cgi-bin/voice_list'] = handlers.voice_list;
 handle['/cgi-bin/wakeup'] = handlers.wakeup;
+
+// APPS
+handle['/cgi-bin/apps/clock'] = handlers.clock;
+handle['/cgi-bin/apps/moods'] = handlers.moods;
 
 log.info('OpenKarotz Emulator');
 server.start(router.route, handle);

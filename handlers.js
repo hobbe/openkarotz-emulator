@@ -91,6 +91,11 @@ function homepage(res, req) {
 	        + '<li><a target="results" href="/cgi-bin/snapshot_get">snapshot_get</a>, <a target="results" href="/cgi-bin/snapshot_get?filename=snapshot.thumb.gif">snapshot_get(thumbnail)</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/clear_snapshots">clear_snapshots</a></li>'
 	        + '</ul>'
+	        + '<h2>Apps</h2>'
+	        + '<ul>'
+	        + '<li><a target="results" href="/cgi-bin/apps/clock">clock</a>, <a target="results" href="/cgi-bin/apps/clock?hour=12">clock(12)</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/apps/moods">moods</a>, <a target="results" href="/cgi-bin/apps/moods?id=50">moods(50)</a></li>'
+	        + '</ul>'
 	        + '<hr/>'
 	        + '<p><small>'
 	        + '<a href="https://github.com/hobbe">Copyright &copy 2013</a> - '
@@ -570,3 +575,46 @@ function clear_snapshots(res, req) {
 }
 exports.clear_snapshots = clear_snapshots;
 
+function clock(res, req) {
+	log.trace('clock: begin');
+
+	var data = '';
+	if (karotz.isSleeping()) {
+		data = '{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}';
+	} else {
+		var hour = getParameter(req, "hour");
+		if (hour === undefined) {
+			hour = new Date().getHours();
+		}
+		if (hour >= 0 && hour <= 23) {
+			data = '{"return":"0","hour":"' + hour + '"}';
+		} else {
+			data = '{"return":"1","hour":"' + hour + '"}';
+		}
+	}
+
+	sendResponse(res, data);
+	log.trace('clock: end');
+}
+exports.clock = clock;
+
+function moods(res, req) {
+	log.trace('moods: begin');
+
+	var data = '';
+	if (karotz.isSleeping()) {
+		data = '{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}';
+	} else {
+		var mood = getParameter(req, "id");
+		//var lang = getParameter(req, "lang"); // Unused
+		if (mood === undefined) {
+			mood = Math.floor((Math.random() * 300) + 1);
+		}
+
+		data = '{"moods":"' + mood + '","return":"0"}';
+	}
+
+	sendResponse(res, data);
+	log.trace('moods: end');
+}
+exports.moods = moods;

@@ -8,7 +8,7 @@ Current version 0.1.0 is still in development but usable.
 
 OpenKarotz can be found [here](http://openkarotz.filippi.org/).
 
-The following APIs are currently available:
+The following APIs are available:
 - clear_cache
 - clear_snapshots
 - ears
@@ -33,6 +33,10 @@ The following APIs are currently available:
 - tts
 - voice_list
 - wakeup
+
+The following Apps are available:
+- clock
+- moods
 
 
 ### Usage ###
