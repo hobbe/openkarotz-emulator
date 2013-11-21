@@ -31,7 +31,7 @@ var log = require('./log');
 
 var version = "200";
 var sleeping = true;
-var sleepTime = new Date().getTime();
+var sleepTime = Math.floor(new Date().getTime() / 1000);
 var earsDisabled = false;
 var earsLeft = 0;
 var earsRight = 0;
@@ -83,13 +83,15 @@ exports.getLedsSpeed = function() {
 
 
 function sleep() {
+	log.info("Karotz sleep");
 	sleeping = true;
-	sleepTime = new Date().getTime();
+	sleepTime = Math.floor(new Date().getTime() / 1000);
 	return sleeping;
 };
 exports.sleep = sleep;
 
 function wakeup() {
+	log.info("Karotz wake up");
 	sleeping = false;
 	sleepTime = 0;
 	return sleeping;
@@ -97,12 +99,14 @@ function wakeup() {
 exports.wakeup = wakeup;
 
 function reboot() {
+	log.info("Karotz reboot");
 	wakeup();
 	return sleeping;
 };
 exports.reboot = reboot;
 
 function leds(color1, color2, pulse, speed) {
+	log.info("Karotz leds");
 	if (color1) ledsColor1 = color1;
 	if (color2) ledsColor2 = color2;
 	if (pulse) ledsPulse = pulse;
@@ -111,17 +115,20 @@ function leds(color1, color2, pulse, speed) {
 exports.leds = leds;
 
 function ears(left, right) {
+	log.info("Karotz ears");
 	if (left) earsLeft = left;
 	if (right) earsRight = right;
 }
 exports.ears = ears;
 
 function enableEars() {
+	log.info("Karotz enable ears");
 	earsDisabled = false;
 }
 exports.enableEars = enableEars;
 
 function disableEars() {
+	log.info("Karotz disable ears");
 	earsDisabled = true;
 }
 exports.disableEars = disableEars;
