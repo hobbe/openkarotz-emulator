@@ -1,28 +1,30 @@
 {
-  "name": "OpenKarotz Emulator",
-  "version": "0.1.0",
-  "description": "HTTP server to emulate OpenKarotz",
-  "main": "index.js",
-  "readmeFilename": "README.md",
-  "homepage": "http://github.com/hobbe/openkarotz-emulator",
-  "author": "Olivier Bagot (http://github.com/hobbe)",
-  "keywords": [
-    "openkarotz",
-    "emulator",
-    "node.js"
-  ],
-  "contributors": [
-    "Olivier Bagot (http://github.com/hobbe)"
-  ],
-  "bugs": {
-    "url": "http://github.com/hobbe/openkarotz-emulator/issues"
-  },
-  "license": {
-    "type": "MIT",
-    "url": "http://github.com/hobbe/openkarotz-emulator/raw/master/LICENSE"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/hobbe/openkarotz-emulator.git"
-  }
+	"name": "openkarotz-emulator",
+	"version": "0.1.0",
+	"description": "OpenKarotz Emulator, HTTP server to emulate OpenKarotz",
+	"main": "index.js",
+	"readmeFilename": "README.md",
+	"homepage": "http://github.com/hobbe/openkarotz-emulator",
+	"author": "Olivier Bagot (http://github.com/hobbe)",
+	"keywords": [
+		"openkarotz",
+		"emulator",
+		"http",
+		"server",
+		"node.js"
+	],
+	"contributors": [
+		"Olivier Bagot (http://github.com/hobbe)"
+	],
+	"bugs": {
+		"url": "http://github.com/hobbe/openkarotz-emulator/issues"
+	},
+	"license": {
+		"type": "MIT",
+		"url": "http://github.com/hobbe/openkarotz-emulator/raw/master/LICENSE"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/hobbe/openkarotz-emulator.git"
+	}
 }

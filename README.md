@@ -1,6 +1,6 @@
-## OpenKarotz Emulator ##
+# OpenKarotz Emulator #
 
-### Description ###
+## Description ##
 
 HTTP server written in Node.js to emulate OpenKarotz.
 
@@ -39,7 +39,7 @@ The following Apps are available:
 - moods
 
 
-### Usage ###
+## Usage ##
 
 1. Install [Node.js](http://nodejs.org/).
 
