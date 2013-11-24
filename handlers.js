@@ -465,10 +465,10 @@ function snapshot_list(res, req) {
 	log.trace('snapshot_list: begin');
 
 	var data = '{"snapshots":['
-		+ '{"id":"snapshot_2013_11_10_09_00_00"},'
-		+ '{"id":"snapshot_2013_11_10_09_01_00"},'
-		+ '{"id":"snapshot_2013_11_10_09_02_00"},'
-		+ '{"id":"snapshot_2013_11_10_09_03_00"}'
+		+ '{"id":"snapshot_2013_11_10_09_00_00.jpg"},'
+		+ '{"id":"snapshot_2013_11_10_09_01_00.jpg"},'
+		+ '{"id":"snapshot_2013_11_10_09_02_00.jpg"},'
+		+ '{"id":"snapshot_2013_11_10_09_03_00.jpg"}'
 		+ '],"return":"0"}';
 
 	sendResponse(res, data);
