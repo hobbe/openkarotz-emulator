@@ -81,6 +81,7 @@ function homepage(res, req) {
 	        + '<ul>'
 	        + '<li><a target="results" href="/cgi-bin/voice_list">voice_list</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/tts?text=Hello%20World">tts</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/display_cache">display_cache</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/clear_cache">clear_cache</a></li>'
 	        + '</ul>'
 	        + '<h2>Photos</h2>'
@@ -90,6 +91,16 @@ function homepage(res, req) {
 	        + '<li><a target="results" href="/cgi-bin/snapshot_list">snapshot_list</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/snapshot_get">snapshot_get</a>, <a target="results" href="/cgi-bin/snapshot_get?filename=snapshot.thumb.gif">snapshot_get(thumbnail)</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/clear_snapshots">clear_snapshots</a></li>'
+	        + '</ul>'
+	        + '<h2>RFID</h2>'
+	        + '<ul>'
+	        + '<li><a target="results" href="/cgi-bin/rfid_list">rfid_list</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/rfid_list_ext">rfid_list_ext</a></li>'
+	        + '</ul>'
+	        + '<h2>Misc.</h2>'
+	        + '<ul>'
+	        + '<li><a target="results" href="/cgi-bin/moods_list">moods_list</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/stories_list">stories_list</a></li>'
 	        + '</ul>'
 	        + '<h2>Apps</h2>'
 	        + '<ul>'
@@ -565,6 +576,16 @@ function clear_cache(res, req) {
 }
 exports.clear_cache = clear_cache;
 
+function display_cache(res, req) {
+	log.trace('display_cache: begin');
+
+	var data = '{"cache":[{"id":"6fcfe1b9dfc7fe6d3df40872d36f43ac","text":"bonjour lapin","voice":"margaux"}],"return":"0"}';
+
+	sendResponse(res, data);
+	log.trace('display_cache: end');
+}
+exports.display_cache = display_cache;
+
 function clear_snapshots(res, req) {
 	log.trace('clear_snapshots: begin');
 
@@ -574,6 +595,32 @@ function clear_snapshots(res, req) {
 	log.trace('clear_snapshots: end');
 }
 exports.clear_snapshots = clear_snapshots;
+
+function rfid_list(res, req) {
+	log.trace('rfid_list: begin');
+
+	var data = '{"tags":['
+		+ '{"id":"D0021A35038F0CD2","type":"1","color":"4","cmd":"0","var":"-1","name":"" },'
+		+ '{ "id":"D0021A3506196568","type":"1","color":"3","cmd":"3","var":"-1","name":"Radio"}'
+		+ '],"return":"0"}';
+
+	sendResponse(res, data);
+	log.trace('rfid_list: end');
+}
+exports.rfid_list = rfid_list;
+
+function rfid_list_ext(res, req) {
+	log.trace('rfid_list_ext: begin');
+
+	var data = '{"tags":['
+		+ '{"id":"D0021A35038F0CD2","type":"1","type_name":"FLATANOZ","color":"4","color_name":"JAUNE"},'
+		+ '{"id":"D0021A3506196568","type":"1","type_name":"FLATANOZ","color":"3","color_name":"VERT"}'
+		+ '],"return":"0"}';
+
+	sendResponse(res, data);
+	log.trace('rfid_list_ext: end');
+}
+exports.rfid_list_ext = rfid_list_ext;
 
 function clock(res, req) {
 	log.trace('clock: begin');
@@ -618,3 +665,31 @@ function moods(res, req) {
 	log.trace('moods: end');
 }
 exports.moods = moods;
+
+function moods_list(res, req) {
+	log.trace('moods_list: begin');
+
+	// Only the first 5
+	var data = '{"moods":['
+		+ '{"id":"1","text":"Ronflements"},'
+		+ '{"id":"2","text":"B&acirc;illement"},'
+		+ '{"id":"3","text":"Eternuement Pardon !"},'
+		+ '{"id":"4","text":"Arracher les orties."},'
+		+ '{"id":"5","text":"Bonjour ! Je suis un lapin, je suis gentil. Ha ha ha ha&hellip;"}'
+		+ '],"return":"0"}';
+
+	sendResponse(res, data);
+	log.trace('moods_list: end');
+}
+exports.moods_list = moods_list;
+
+function stories_list(res, req) {
+	log.trace('stories_list: begin');
+
+	var data = '{"stories":[],"return":"0"}';
+
+	sendResponse(res, data);
+	log.trace('stories_list: end');
+}
+exports.stories_list = stories_list;
+
