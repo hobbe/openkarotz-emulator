@@ -87,7 +87,7 @@ function sleep() {
 	sleeping = true;
 	sleepTime = Math.floor(new Date().getTime() / 1000);
 	return sleeping;
-};
+}
 exports.sleep = sleep;
 
 function wakeup() {
@@ -95,14 +95,14 @@ function wakeup() {
 	sleeping = false;
 	sleepTime = 0;
 	return sleeping;
-};
+}
 exports.wakeup = wakeup;
 
 function reboot() {
 	log.info("Karotz reboot");
 	wakeup();
 	return sleeping;
-};
+}
 exports.reboot = reboot;
 
 function leds(color1, color2, pulse, speed) {

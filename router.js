@@ -35,14 +35,14 @@ function route(pathname, handle, res, req) {
 
 	if (typeof handle[pathname] === 'function') {
 		return handle[pathname](res, req);
-	} else {
-		log.failure('No request handler found for ' + pathname);
-		res.writeHead(404, {
-			'Content-Type' : 'text/plain'
-		});
-		res.write('404 Not Found');
-		res.end();
 	}
+
+	log.failure('No request handler found for ' + pathname);
+	res.writeHead(404, {
+		'Content-Type' : 'text/plain'
+	});
+	res.write('404 Not Found');
+	res.end();
 }
 
 exports.route = route;

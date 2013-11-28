@@ -96,6 +96,8 @@ function homepage(res, req) {
 	        + '<ul>'
 	        + '<li><a target="results" href="/cgi-bin/rfid_list">rfid_list</a></li>'
 	        + '<li><a target="results" href="/cgi-bin/rfid_list_ext">rfid_list_ext</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/rfid_start_record">rfid_start_record</a></li>'
+	        + '<li><a target="results" href="/cgi-bin/rfid_stop_record">rfid_stop_record</a></li>'
 	        + '</ul>'
 	        + '<h2>Misc.</h2>'
 	        + '<ul>'
@@ -356,11 +358,11 @@ function sound(res, req) {
 		data = '{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}';
 	} else {
 		var id = getParameter(req, "id");
-		var url = getParameter(req, "url");
+		var uri = getParameter(req, "url");
 
-		if (id && url) {
+		if (id && uri) {
 			data = '{"return":"1","msg":"You cannot use ID and URL parameters at the same time."}';
-		} else if ((id === undefined) && (url === undefined)) {
+		} else if ((id === undefined) && (uri === undefined)) {
 			data = '{"return":"1","msg":"No sound to play."}';
 		} else if (id) {
 			data = '{"return":"0"}';
@@ -621,6 +623,26 @@ function rfid_list_ext(res, req) {
 	log.trace('rfid_list_ext: end');
 }
 exports.rfid_list_ext = rfid_list_ext;
+
+function rfid_start_record(res, req) {
+	log.trace('rfid_start_record: begin');
+
+	var data = '{"return":"0"}';
+
+	sendResponse(res, data);
+	log.trace('rfid_start_record: end');
+}
+exports.rfid_start_record = rfid_start_record;
+
+function rfid_stop_record(res, req) {
+	log.trace('rfid_stop_record: begin');
+
+	var data = '{"return":"0"}';
+
+	sendResponse(res, data);
+	log.trace('rfid_stop_record: end');
+}
+exports.rfid_stop_record = rfid_stop_record;
 
 function clock(res, req) {
 	log.trace('clock: begin');
